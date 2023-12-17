@@ -3,12 +3,17 @@ const app = express();
 const mongoose = require("mongoose");
 const Listing = require("./models/listing.js");
 const path = require("path");
+const methodOverride = require("method-override");
+const { redirect } = require("express/lib/response.js");
+const ejsMate = require("ejs-mate");
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({extended: true}));
+app.use(methodOverride("_method"));
 console.log("Views", path.join(__dirname, 'views'));
-
+app.engine('ejs',ejsMate);
+app.use(express.static(path.join(__dirname,"/public")));
 
 const Mongo_URL = "mongodb://127.0.0.1:27017/wonderlust";
 
@@ -33,16 +38,55 @@ app.get("/listings", async (req, res) => {
     res.render("listings/index", { allListings });
 });
 
-app.get("/listing/newForm", async(req,res) => {
-    res.render("new.ejs");
+// new listing root
+app.get("/listings/new", async(req,res) => {
+    res.render("listings/new.ejs");
 })
 
+// create new listings root
+app.post("/listings", async(req,res) => {
+    let listings = req.body.listing;
+    const newListings = new Listing(listings);
+    await newListings.save();
+    res.redirect("/listings");
 
+})
+
+// show listing root
 app.get("/listings/:id", async(req,res) => {
   let  {id} = req.params;
   const listing = await Listing.findById(id);
   res.render("listings/show.ejs", {listing});
 });
+
+// edit listing root
+app.get("/listings/:id/edit",async(req,res) => {
+     let  {id} = req.params;
+  const listing = await Listing.findById(id);
+    res.render("listings/edit.ejs",{listing});
+});
+
+
+// update root
+// if the update root dont work then see the databaser as we need to pass all the data in findByIdAndUpdate as all the data listed in database. If we dont have then set the data of edit.ejs file again as data inside the database is listed.
+// If it still not woriking then to pass the form data inside this root use the middlewear as shown bellow                                                 const bodyParser = require('body-parser');
+
+app.put('/listings/:id', async (req, res) => {
+        const { id } = req.params;
+        const updatedData = req.body.listings; // Ensure this matches your schema
+        await Listing.findByIdAndUpdate(id, updatedData); // correct version
+        // incorrect version :  await Listing.findByIdAndUpdate(id, {req.body.listings});
+        res.redirect(`/listings/${id}`);
+});
+
+// detele root 
+app.delete('/listings/:id', async (req, res) => {
+        const { id } = req.params;
+        await Listing.findByIdAndDelete(id);
+        res.redirect("/listings");
+});
+
+
 
 
 

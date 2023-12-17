@@ -10,12 +10,12 @@
 <body>
     <h3>Make a new form</h3> <br><br>
     <form method="POST" action="/listings">
-        <input type="text" name="title" placeholder="Enter the description"><br><br>
-        <textarea name="description" id="description" cols="30" rows="10"></textarea><br><br>
-        <input type="text" name="image" placeholder="Enter the image url/link"><br><br>
-        <input type="text" name="price" placeholder="Enter the price"><br><br>
-        <input type="text" name="country" placeholder="Enter the country"><br><br>
-        <input type="text" name="location" placeholder="Enter the location"><br><br>
+        <input type="text" name="listing[title]" placeholder="Enter the description"><br><br>
+        <textarea name="listing[description]" id="description" cols="30" rows="10"></textarea><br><br>
+        <input type="text" name="listing[image]" placeholder="Enter the image url/link"><br><br>
+        <input type="text" name="listing[price]" placeholder="Enter the price"><br><br>
+        <input type="text" name="listing[country]" placeholder="Enter the country"><br><br>
+        <input type="text" name="listing[location]" placeholder="Enter the location"><br><br>
         <button type="submit">Submit</button>
     </form>
 </body>
