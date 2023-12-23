@@ -6,6 +6,8 @@ const path = require("path");
 const methodOverride = require("method-override");
 const { redirect } = require("express/lib/response.js");
 const ejsMate = require("ejs-mate");
+const wrapAsync = require("./utils/wrapAsync.js");
+const ExpressError = require("./utils/ExpressError.js")
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -33,58 +35,60 @@ app.get("/", (req,res) => {
 
 
 // index root
-app.get("/listings", async (req, res) => {
+app.get("/listings", wrapAsync(async (req, res) => {
     const allListings = await Listing.find({});
     res.render("listings/index", { allListings });
-});
+}));
 
 // new listing root
-app.get("/listings/new", async(req,res) => {
+app.get("/listings/new", wrapAsync(async(req,res) => {
     res.render("listings/new.ejs");
-})
+}))
 
 // create new listings root
-app.post("/listings", async(req,res) => {
+app.post("/listings",wrapAsync(async(req,res,next) => {
+    if(!req.body.listing){
+        throw new ExpressError(400,"Send valid data for listing")
+    }
     let listings = req.body.listing;
     const newListings = new Listing(listings);
     await newListings.save();
     res.redirect("/listings");
-
-})
+}))
 
 // show listing root
-app.get("/listings/:id", async(req,res) => {
+app.get("/listings/:id", wrapAsync( async(req,res) => {
   let  {id} = req.params;
   const listing = await Listing.findById(id);
   res.render("listings/show.ejs", {listing});
-});
+}));
 
 // edit listing root
-app.get("/listings/:id/edit",async(req,res) => {
+app.get("/listings/:id/edit", wrapAsync(async(req,res) => {
      let  {id} = req.params;
   const listing = await Listing.findById(id);
     res.render("listings/edit.ejs",{listing});
-});
+}));
 
 
 // update root
 // if the update root dont work then see the databaser as we need to pass all the data in findByIdAndUpdate as all the data listed in database. If we dont have then set the data of edit.ejs file again as data inside the database is listed.
 // If it still not woriking then to pass the form data inside this root use the middlewear as shown bellow                                                 const bodyParser = require('body-parser');
 
-app.put('/listings/:id', async (req, res) => {
+app.put('/listings/:id', wrapAsync(async (req, res) => {
         const { id } = req.params;
         const updatedData = req.body.listings; // Ensure this matches your schema
         await Listing.findByIdAndUpdate(id, updatedData); // correct version
         // incorrect version :  await Listing.findByIdAndUpdate(id, {req.body.listings});
         res.redirect(`/listings/${id}`);
-});
+}));
 
 // detele root 
-app.delete('/listings/:id', async (req, res) => {
+app.delete('/listings/:id', wrapAsync( async (req, res) => {
         const { id } = req.params;
         await Listing.findByIdAndDelete(id);
         res.redirect("/listings");
-});
+}));
 
 
 
@@ -105,6 +109,13 @@ app.delete('/listings/:id', async (req, res) => {
 //     res.send("Successful testing");
 // })
 
+app.all("*", (req, res, next) => {
+    next(new ExpressError(404, "page not found!"))
+})
+app.use((err, req, res, next) => {
+    let{statusCode=500, message = "Something went wrong!"} = err;
+    res.status(statusCode).send(message)
+})
 app.listen(8080, () => {
     console.log("The server is working on port 8080")
 });
