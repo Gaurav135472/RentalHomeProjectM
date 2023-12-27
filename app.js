@@ -8,6 +8,8 @@ const { redirect } = require("express/lib/response.js");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js")
+const {listingSchema, reviewSchema} = require("./schema.js")
+const Review = require("./models/review.js");
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -33,7 +35,24 @@ app.get("/", (req,res) => {
     res.send("Hi, I am root")
 });
 
-
+const validateListing = (req, res, next) => {
+    let {error} = listingSchema.validate(req.body);
+    if(error){
+        let errorMesaage = error.details.map((el) => el.message).join(",")
+        throw new ExpressError(400, errorMesaage);
+    }else{
+        next();
+    }
+}
+const validateReview = (req, res, next) => {
+    let {error} = reviewSchema.validate(req.body);
+    if(error){
+        let errorMesaage = error.details.map((el) => el.message).join(",")
+        throw new ExpressError(400, errorMesaage);
+    }else{
+        next();
+    }
+}
 // index root
 app.get("/listings", wrapAsync(async (req, res) => {
     const allListings = await Listing.find({});
@@ -46,10 +65,7 @@ app.get("/listings/new", wrapAsync(async(req,res) => {
 }))
 
 // create new listings root
-app.post("/listings",wrapAsync(async(req,res,next) => {
-    if(!req.body.listing){
-        throw new ExpressError(400,"Send valid data for listing")
-    }
+app.post("/listings", validateListing, wrapAsync(async(req,res,next) => {
     let listings = req.body.listing;
     const newListings = new Listing(listings);
     await newListings.save();
@@ -59,7 +75,7 @@ app.post("/listings",wrapAsync(async(req,res,next) => {
 // show listing root
 app.get("/listings/:id", wrapAsync( async(req,res) => {
   let  {id} = req.params;
-  const listing = await Listing.findById(id);
+  const listing = await Listing.findById(id).populate("reviews");
   res.render("listings/show.ejs", {listing});
 }));
 
@@ -75,7 +91,7 @@ app.get("/listings/:id/edit", wrapAsync(async(req,res) => {
 // if the update root dont work then see the databaser as we need to pass all the data in findByIdAndUpdate as all the data listed in database. If we dont have then set the data of edit.ejs file again as data inside the database is listed.
 // If it still not woriking then to pass the form data inside this root use the middlewear as shown bellow                                                 const bodyParser = require('body-parser');
 
-app.put('/listings/:id', wrapAsync(async (req, res) => {
+app.put('/listings/:id', validateListing, wrapAsync(async (req, res) => {
         const { id } = req.params;
         const updatedData = req.body.listings; // Ensure this matches your schema
         await Listing.findByIdAndUpdate(id, updatedData); // correct version
@@ -90,7 +106,18 @@ app.delete('/listings/:id', wrapAsync( async (req, res) => {
         res.redirect("/listings");
 }));
 
+// reviews post rooute
 
+app.post("/listings/:id/reviews",validateReview, wrapAsync(async(req,res) => {
+   let listing = await Listing.findById(req.params.id);
+   let newReview = new Review(req.body.review);
+   listing.reviews.push(newReview);
+
+   await newReview.save();
+   await listing.save();
+
+   res.redirect(`/listings/${listing._id}`);
+}));
 
 
 
@@ -110,12 +137,14 @@ app.delete('/listings/:id', wrapAsync( async (req, res) => {
 // })
 
 app.all("*", (req, res, next) => {
-    next(new ExpressError(404, "page not found!"))
+    next(new ExpressError(404, "page not found!"));
 })
 app.use((err, req, res, next) => {
     let{statusCode=500, message = "Something went wrong!"} = err;
-    res.status(statusCode).send(message)
+   
+res.status(statusCode).render("error.ejs",{message});
+    // res.status(statusCode).send(message)
 })
 app.listen(8080, () => {
-    console.log("The server is working on port 8080")
+    console.log("The server is working on port 8080");
 });

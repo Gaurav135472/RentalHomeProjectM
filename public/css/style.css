@@ -20,6 +20,11 @@ flex: 1;
 .nav-link{
     color: #222222 !important;
 }
+.stick-footer{
+    display: flex;
+    flex-direction: column;
+    margin-top: auto;
+}
 .f-info{
     height: 8rem;
     background-color: #ebebeb;
