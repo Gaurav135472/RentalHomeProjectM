@@ -4,10 +4,10 @@
         <button>Create a new post</button>
     </form>
     <h3>All Listings</h3> -->
-    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
+    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 offset-1">
         <% for(let listing of allListings){ %>
             <a href="/listings/<%= listing._id %>" class="listing-link">
-            <div class="card col" style="width: 20rem;">
+            <div class="card col borderCard" style="width: 20rem;">
                 <img src="<%=listing.image  %>" class="card-img-top" alt="Listing Image" style="height: 20rem">
 <!-- this card image overly is used to write on put something on the image      -->
                         <div class="card-img-overlay"></div>
@@ -15,10 +15,9 @@
                     <p class="card-text">
                       <b>  <%= listing.title %></b> <br>
                             <% if (listing && listing.price) { %>
-                                <%= listing.price.toLocaleString("en-CA") %>/night
-                                    <% } else { %>
+                                <%= listing.price.toLocaleString("en-CA") %>/night  <% } else { %>
                                         Price not available
-                                        <% } %>t
+                                        <% } %>
                     </p>
                 </div>
             </div>

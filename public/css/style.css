@@ -59,7 +59,7 @@ flex: 1;
     text-decoration: underline;  
 }
 
-.card{
+.borderCard{
     border: none !important;
     margin-bottom: 2rem;
 }
