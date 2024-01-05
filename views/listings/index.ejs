@@ -3,11 +3,63 @@
         <button>Create a new post</button>
     </form>
      -->
-    <div class="mt-2 mb-2">
+    <!-- <div class="mt-2 mb-2">
     <h3 style="text-align: center;">All Listings</h3>
+    </div> -->
+    <div id="filters" class=" offset-1 mt-3">
+    <div class="filter">
+       <div><i class="fa-solid fa-fire"></i></div> 
+       <p>Trending</p>
+    </div>
+    <div class="filter">
+        <div><i class="fa-solid fa-bed"></i></div>
+        <p>Room</p>
+    </div>
+    <div class="filter">
+        <div><i class="fa-solid fa-mountain-city"></i></div>
+        <p>Iconic city</p>
+    </div>
+    <div class="filter">
+        <div><i class="fa-solid fa-mountain"></i></div>
+        <p>Mountain</p>
+    </div>
+    <div class="filter">
+        <div><i class="fa-brands fa-fort-awesome"></i></div>
+        <p>Castle</p>
+    </div>
+    <div class="filter">
+        <div><i class="fa-solid fa-person-swimming"></i></div>
+        <p>Amazing pools</p>
+    </div>
+    <div class="filter">
+        <div><i class="fa-solid fa-campground"></i></div>
+        <p>Camping</p>
+    </div>
+    <div class="filter">
+        <div><i class="fa-solid fa-cow"></i></i></div>
+        <p>farms</p>
+    </div>
+    <div class="filter">
+        <div><i class="fa-solid fa-snowflake"></i></div>
+        <p>Mountain</p>
+    </div>
+    <div class="filter">
+        <div><i class="fa-brands fa-fort-awesome"></i></div>
+        <p>Castle</p>
+    </div>
+    <div class="filter">
+        <div><i class="fa-solid fa-person-swimming"></i></div>
+        <p>Amazing pools</p>
+    </div>
+    <div class="tax-toggle">
+        <div class="form-check-reverse form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Display taxes</label>
+        </div>
+    </div>
     </div>
 
-    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 offset-1">
+    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 offset-1 mt-3" >
         <% for(let listing of allListings){ %>
             <a href="/listings/<%= listing._id %>" class="listing-link">
             <div class="card col borderCard" style="width: 20rem;">
@@ -18,7 +70,7 @@
                     <p class="card-text">
                       <b>  <%= listing.title %></b> <br>
                             <% if (listing && listing.price) { %>
-                                <%= listing.price.toLocaleString("en-CA") %>/night  <% } else { %>
+                                <%= listing.price.toLocaleString("en-CA") %>/night <i class="tax-info">13% Text</i> <% } else { %>
                                         Price not available
                                         <% } %>
                     </p>
@@ -27,3 +79,17 @@
             <% } %>
              </a>
     </div>
+<script>
+    let priceToggle = document.getElementById("flexSwitchCheckDefault");
+    priceToggle.addEventListener("click", () => {
+        let taxInfo = document.getElementsByClassName("tax-info");
+        for(info of taxInfo){
+            if(info.style.display != "inline"){
+                info.style.display = "inline";
+            }
+            else{
+                info.style.display = "none";
+            }
+        }
+    })
+</script>

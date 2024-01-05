@@ -103,3 +103,42 @@ flex: 1;
     padding-left: 0;
     padding-right: 0;
 }
+#filters{
+    display: flex;
+    flex-wrap: wrap;
+}
+.filter{
+    margin-top: 1rem;
+    margin-right: 2rem;
+    opacity: 0.6;
+}
+
+.filter:hover{
+    opacity: 1;
+    cursor: pointer;
+}
+
+.filter p{
+    font-size: 0.8;
+}
+
+.text-info{
+    display: none;
+}
+
+.tax-toggle{
+    border: 1px solid black;
+    border-radius: 1rem;
+    padding: 1rem;
+    height: 3.5 rem;
+}
+.btn-nav{
+    background-color: #fe424d !important;
+    color: #ebebeb !important;
+}
+
+.btn-nav {
+    display: inline !important;
+    margin-right: 0.5rem !important;
+}
+

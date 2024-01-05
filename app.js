@@ -1,3 +1,7 @@
+if(process.env.NODE_ENV != "production"){
+    require('dotenv').config();
+}
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -62,12 +66,6 @@ passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.get("/", (req,res) => {
-    res.send("Hi, I am root")
-});
-
-
-
 app.use((req, res, next) => {
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
@@ -75,17 +73,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// app.get("/demouser", async(req,res) => {
-//     let fakeUser = new User({
-//         email : "student@gmail2.com",
-//         username: "delta-student3"
-//     });
-
-//     let registerUser =await User.register(fakeUser,"Gaurav@0782");
-//     res.send(registerUser);
-//     console.log(registerUser);
-
-// })
 
 
 
