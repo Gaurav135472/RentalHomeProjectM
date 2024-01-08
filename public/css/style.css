@@ -141,4 +141,7 @@ flex: 1;
     display: inline !important;
     margin-right: 0.5rem !important;
 }
-
+#map {
+    height: 40vh;
+    width: 80vh;
+}

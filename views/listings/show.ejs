@@ -1,4 +1,8 @@
 <%= layout("/layouts/boilerplate") %>
+<script>
+    const mapToken = "<%= process.env.MAP_TOKEN %>";
+    const coordinates = <%- JSON.stringify(listing.geometry.coordinates) %>;
+</script>
 <div class="row">
     <div class="col-8 offset-2 mt-3">
     <h3><%= listing.title %></h3>
@@ -6,7 +10,7 @@
     
     <div class="card col-6 offset-2 borderCard">
         <div class="card show-card borderCard" style="width: 18rem;">
-            <img src="<%= listing.image %>" class="card-img-top show-img " alt="Listing_Image">
+            <img src="<%= listing.image.url %>" class="card-img-top show-img " alt="Listing_Image">
             <div class="card-body">
                 <p class="card-text">
                   <b> <i>
@@ -79,10 +83,11 @@
         </form>
         <% } %>
 
-        <hr>
-        <h4>All reviews</h4>
-     
+       
+        <% if(listing.reviews.length > 0) { %>
+            <hr>
         <div class="row">
+            <h4>All reviews</h4>
             <% for(review of listing.reviews){ %>
                 <div class="card col-5 ms-3 mb-3">
                     <div class="card-body">
@@ -99,5 +104,15 @@
                 </div>
                 <% } %>
         </div>
+        <% } %>
+        <hr>
+        <div class="col-8  mt-3 mb-3">
+            <h3>Where you'll be</h3>
+            <div id="map">
+
+            </div>
+        </div>
     </div>
 </div>
+<script src="/js/map.js"></script>
+

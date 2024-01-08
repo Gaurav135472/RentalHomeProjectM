@@ -32,17 +32,21 @@ app.engine('ejs',ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
 app.use(flash());
 
-const Mongo_URL = "mongodb://127.0.0.1:27017/wonderlust";
+// const Mongo_URL = "mongodb://127.0.0.1:27017/wonderlust";
 
+ const dbUrl = process.env.ATLASDB_URL;
 
 main().then(() => {
     console.log("Connected to db")
-}).catch(()=> {
+}).catch((err)=> {
     console.log(err);
 });
 
 async function main(){
-    await mongoose.connect(Mongo_URL);
+   // await mongoose.connect(dbUrl);
+   // await mongoose.connect(process.env.ATLASDB_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+
+   await mongoose.connect(dbUrl);
 }
 
 const sessionOptions = {
