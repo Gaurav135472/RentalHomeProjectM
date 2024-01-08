@@ -70,7 +70,9 @@
                     <p class="card-text">
                       <b>  <%= listing.title %></b> <br>
                             <% if (listing && listing.price) { %>
-                                <%= listing.price.toLocaleString("en-CA") %>/night <i class="tax-info">13% Text</i> <% } else { %>
+                                <%= listing.price.toLocaleString("en-CA") %>/night <i class="tax-info" style="display: none;" data-price="<%= listing.price %>">
+                                    (Tax: Calculating...)
+                                </i> <% } else { %>
                                         Price not available
                                         <% } %>
                     </p>
@@ -79,17 +81,36 @@
             <% } %>
              </a>
     </div>
-<script>
-    let priceToggle = document.getElementById("flexSwitchCheckDefault");
-    priceToggle.addEventListener("click", () => {
-        let taxInfo = document.getElementsByClassName("tax-info");
-        for(info of taxInfo){
-            if(info.style.display != "inline"){
-                info.style.display = "inline";
-            }
-            else{
-                info.style.display = "none";
+
+    <script>
+        let priceToggle = document.getElementById("flexSwitchCheckDefault");
+        let taxElements = document.getElementsByClassName("tax-info");
+
+        function updateTaxDisplay() {
+            for (let taxElement of taxElements) {
+                if (priceToggle.checked) {
+                    let priceString = taxElement.getAttribute('data-price');
+                    let cleanedPriceString = priceString.replace(/[^\d.]/g, '');
+                    let price = parseFloat(cleanedPriceString);
+
+                    if (!isNaN(price)) {
+                        let taxValue = ((price * 13) / 100);
+                        taxElement.textContent = ` (Tax: ${taxValue.toFixed(2)})`;
+                        taxElement.style.display = "inline";
+                        taxElement.style.color = "red";
+
+                    } else {
+                        taxElement.textContent = " (Tax: Not available)";
+                        taxElement.style.display = "inline";
+                    }
+                } else {
+                    taxElement.style.display = "none";
+                }
             }
         }
-    })
-</script>
+
+        priceToggle.addEventListener("click", updateTaxDisplay);
+
+        // Initialize display on page load
+        document.addEventListener("DOMContentLoaded", updateTaxDisplay);
+    </script>

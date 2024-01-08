@@ -5,18 +5,13 @@ if(process.env.NODE_ENV != "production"){
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const Listing = require("./models/listing.js");
 const path = require("path");
 const methodOverride = require("method-override");
 const { redirect } = require("express/lib/response.js");
 const ejsMate = require("ejs-mate");
-const wrapAsync = require("./utils/wrapAsync.js");
-const ExpressError = require("./utils/ExpressError.js")
-const {listingSchema, reviewSchema} = require("./schema.js");
-const Review = require("./models/review.js");
+const ExpressError = require("./utils/ExpressError.js");
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
-const userRouter = require("./routes/user.js");
 const session = require("express-session");
 const flash = require('connect-flash');
 const passport = require("passport");
@@ -32,7 +27,7 @@ app.engine('ejs',ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
 app.use(flash());
 
-// const Mongo_URL = "mongodb://127.0.0.1:27017/wonderlust";
+ // const Mongo_URL = "mongodb://127.0.0.1:27017/wonderlust";
 
  const dbUrl = process.env.ATLASDB_URL;
 
@@ -43,10 +38,10 @@ main().then(() => {
 });
 
 async function main(){
-   // await mongoose.connect(dbUrl);
+  //  await mongoose.connect(Mongo_URL);
    // await mongoose.connect(process.env.ATLASDB_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
-   await mongoose.connect(dbUrl);
+  await mongoose.connect(dbUrl);
 }
 
 const sessionOptions = {
@@ -82,7 +77,9 @@ app.use((req, res, next) => {
 
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews",reviewRouter );
-app.use("/", userRouter);
+app.use("/", (req, res) => {
+     res.redirect("/listings");
+});
 
 
 app.all("*", (req, res, next) => {
@@ -92,7 +89,7 @@ app.use((err, req, res, next) => {
     let{statusCode=500, message = "Something went wrong!"} = err;
    
 res.status(statusCode).render("error.ejs",{message});
-    // res.status(statusCode).send(message)
+    res.status(statusCode).send(message)
 })
 app.listen(8080, () => {
     console.log("The server is working on port 8080");

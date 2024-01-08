@@ -3,6 +3,9 @@ body{
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    min-height: 98vh;
+    max-width: 98%;
+    margin-left: 1% !important
 }
 
 .container{
@@ -21,31 +24,22 @@ flex: 1;
     color: #222222 !important;
 }
 .stick-footer{
-    display: flex;
-    flex-direction: column;
-    margin-top: auto;
+    position: fixed !important;
+    bottom: 0;
+    width: 100%;
+}
+.navbar-expanded {
+    height: auto;
 }
 .f-info{
-    height: 8rem;
     background-color: #ebebeb;
-    display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    align-items:space-evenly;
-    text-align: center;
 }
 .f-info-links, .f-info-social, .f-info-brand{
-    width: 100%;
     vertical-align: middle;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-.f-info-links{
-    width: 100%;
-}
-.f-info-social{
-    width: 100%;
 }
 .f-info-social i{
     font-size: 1.2rem;
